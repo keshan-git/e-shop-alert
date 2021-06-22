@@ -13,17 +13,18 @@ public class TitleSource extends FromIteratorFunction<Title> {
     }
 
     private static class RateLimitedIterator<T> implements Iterator<T>, Serializable {
-        private static final long serialVersionUID = 1L;
         private final Iterator<T> inner;
 
         private RateLimitedIterator( Iterator<T> inner ) {
             this.inner = inner;
         }
 
+        @Override
         public boolean hasNext( ) {
             return this.inner.hasNext( );
         }
 
+        @Override
         public T next( ) {
             try {
                 Thread.sleep( 100L );

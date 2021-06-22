@@ -3,13 +3,14 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import sink.AlertSink;
-import sources.TitleSource;
+import sources.ParallelTitleSource;
 
 public class EShopSalesJob {
     public static void main( String[] args ) throws Exception {
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment( );
         DataStream<Title> titles = environment
-                .addSource( new TitleSource( ) )
+                .addSource( new ParallelTitleSource( ) )
+                .setParallelism( 5 )
                 .name( "titles-on-sale" );
 
         titles

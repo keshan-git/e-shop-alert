@@ -16,22 +16,22 @@ public class TitlePriceMapFunction extends RichMapFunction<Title, Title> {
 
     @Override
     public Title map( Title title ) throws Exception {
-        log.info( "Loading price information for the title, title_id=" + title.getId() );
-        Optional<PriceResponseWrapper> response = client.loadPrice( title.getId() );
+        log.info( "Loading price information for the title, title_id=" + title.getId( ) );
+        Optional<PriceResponseWrapper> response = client.loadPrice( title.getId( ) );
 
         if ( !response.isPresent( ) ) {
             log.warn( "A transaction could not be created, waiting and will try again..." );
             return title;
         }
 
-        PriceResponse price = response.get().getPrices().get( 0 );
-        title.setCurrency( price.getRegular_price().getCurrency() );
-        title.setRegularPrice( price.getRegular_price().getRaw_value() );
-        title.setDiscountPrice( price.getDiscount_price().getRaw_value() );
+        PriceResponse price = response.get( ).getPrices( ).get( 0 );
+        title.setCurrency( price.getRegular_price( ).getCurrency( ) );
+        title.setRegularPrice( price.getRegular_price( ).getRaw_value( ) );
+        title.setDiscountPrice( price.getDiscount_price( ).getRaw_value( ) );
         title.setEndDate( price.getDiscount_price( ).getEnd_datetime( ) );
 
-        title.setDiscountAmount( title.getRegularPrice() - title.getDiscountPrice() );
-        title.setDiscountPercent( (int)Math.round((title.getDiscountAmount() * 100.0) / title.getRegularPrice()) );
+        title.setDiscountAmount( round( title.getRegularPrice( ) - title.getDiscountPrice( ), 2 ) );
+        title.setDiscountPercent( ( int ) Math.round( ( title.getDiscountAmount( ) * 100.0 ) / title.getRegularPrice( ) ) );
 
         return title;
     }
@@ -48,6 +48,10 @@ public class TitlePriceMapFunction extends RichMapFunction<Title, Title> {
     public void close( ) throws Exception {
         super.close( );
         client.close( );
+    }
+
+    private double round( double value, int decimals ) {
+        return Math.round( value * Math.pow( 10, decimals ) ) / ( Math.pow( 10, decimals ) * 1.0 );
     }
 
 }

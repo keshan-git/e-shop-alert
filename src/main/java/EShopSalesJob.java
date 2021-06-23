@@ -2,7 +2,6 @@ import data.Title;
 import mappers.TitlePriceMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-
 import sink.AlertSink;
 import sources.ParallelTitleSource;
 
@@ -16,7 +15,8 @@ public class EShopSalesJob {
 
         DataStream<Title> pricedTitles = titles
                 .map( new TitlePriceMapFunction() )
-                .name( "titles-on-sale-prices" );
+                .keyBy( title -> title.getEndDate() );
+                //.name( "titles-on-sale-prices" );
 
         pricedTitles.addSink( new AlertSink( ) )
                 .name( "send-alerts" );

@@ -32,7 +32,7 @@ public class ParallelTitleSource extends RichParallelSourceFunction<Title> {
     public void run( SourceContext<Title> sourceContext ) throws Exception {
         while ( isRunning ) {
             log.info( "Loading new set of data from the client, offset=" + taskIdx );
-            Optional<TitleResponseWrapper> response = client.loadTitles( 10, taskIdx );
+            Optional<TitleResponseWrapper> response = client.loadTitles( 30, taskIdx );
 
             if ( !response.isPresent( ) ) {
                 log.warn( "Title can't be created, waiting and will try again..." );

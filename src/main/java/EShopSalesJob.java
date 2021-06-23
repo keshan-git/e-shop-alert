@@ -1,4 +1,5 @@
 import data.Title;
+import mappers.TitlePriceMapFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
@@ -10,11 +11,14 @@ public class EShopSalesJob {
         StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment( );
         DataStream<Title> titles = environment
                 .addSource( new ParallelTitleSource( ) )
-                .setParallelism( 5 )
+                .setParallelism( 1 )
                 .name( "titles-on-sale" );
 
-        titles
-                .addSink( new AlertSink( ) )
+        DataStream<Title> pricedTitles = titles
+                .map( new TitlePriceMapFunction() )
+                .name( "titles-on-sale-prices" );
+
+        pricedTitles.addSink( new AlertSink( ) )
                 .name( "send-alerts" );
 
         environment.execute( "Sales Alert" );

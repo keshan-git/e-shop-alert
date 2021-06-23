@@ -35,7 +35,7 @@ public class ParallelTitleSource extends RichParallelSourceFunction<Title> {
             Optional<TitleResponseWrapper> response = client.loadTitles( 10, taskIdx );
 
             if ( !response.isPresent( ) ) {
-                log.warn( "A transaction could not be created, waiting and will try again..." );
+                log.warn( "Title can't be created, waiting and will try again..." );
                 try {
                     Thread.sleep( DEFAULT_WAIT_TIME_MS );
                 } catch ( InterruptedException ignored ) {
